@@ -21,6 +21,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ r
     // We cast it 'as TrendRange' but only after ensuring we have a safe default
     const range = (params.range as TrendRange) || 'last30days';
 
+    const supabase = await createClient();
+    console.log(await supabase.auth.getUser());
+
     // 1. Await the client creation
     const client = await createClient();
 

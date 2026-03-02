@@ -5,7 +5,7 @@ import Input from "@/components/input";
 import Label from "@/components/label";
 import Select from "@/components/select";
 import { categories, types } from "@/lib/consts";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Resolver } from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useState, useEffect, JSX} from "react";
 import { useRouter } from "next/navigation"
@@ -25,7 +25,7 @@ export default function TransactionForm({initialData}: {initialData?: ITransacti
     } = useForm<TransactionFormValues>(
         {
             mode: "onTouched",
-            resolver: zodResolver(transactionSchema),
+            resolver: zodResolver(transactionSchema) as Resolver<TransactionFormValues>,
             defaultValues: initialData ?? {
                 type: 'Expense',
                 amount: 0,
