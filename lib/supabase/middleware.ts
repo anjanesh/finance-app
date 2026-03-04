@@ -1,9 +1,9 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextRequest, NextResponse} from 'next/server';
 
-export async function updateSession(request: NextRequest, response: NextResponse)
+export async function updateSession(request: NextRequest)
 {
-    response = NextResponse.next({
+    let response = NextResponse.next({
         request: {
             headers: request.headers,
         },

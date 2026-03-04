@@ -5,11 +5,9 @@ import { ComponentProps } from "react" // 1. Import ComponentProps
 
 // 2. Define the interface by extending your base Button component props
 // If your Button is a standard HTML button, use ComponentProps<"button">
-interface SubmitButtonProps extends ComponentProps<"button">
+interface SubmitButtonProps extends ComponentProps<typeof Button>
 {
     // Add any custom props here if needed
-    Size?: string,
-    Variant?: string,
 }
 
 export default function SubmitButton(props: SubmitButtonProps)

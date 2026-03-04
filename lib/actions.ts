@@ -111,3 +111,77 @@ export async function signOut()
     const { error } = await supabase.auth.signOut();
     redirect('/login');
 }
+
+export async function uploadAvatar(prevState: FormState, formData: FormData)
+{
+    const supabase = await createClient();
+    const file = formData.get('file') as File | null;
+    if (!file || file.size === 0)
+    {
+        return {
+            error: true,
+            message: 'No file provided'
+        }
+    }
+
+    const fileExt = file.name.split('.').pop();
+    // const fileName = `${Math.random()}.${fileExt}`;
+
+    // Result example: "550e8400-e29b-41d4-a716-446655440000.png"
+    const fileName = `${crypto.randomUUID()}.${fileExt}`;
+
+    const {error} = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file);
+
+    if (error)
+    {
+        return {
+            error: true,
+            message: 'Error uploading avatar'
+        }
+    }
+
+    // Removing the old file
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+
+    if (userError)
+    {
+        return {
+            error: true,
+            message: 'Something went wrong, try again'
+        }
+    }
+
+    const avatar = userData.user.user_metadata.avatar
+    if (avatar)
+    {
+        const { error } = await supabase.storage
+            .from('avatars')
+            .remove([avatar])
+
+        if (error) {
+            return {
+                error: true,
+                message: 'Something went wrong, try again'
+            }
+        }
+    }
+
+    const { error: dataUpdateError } = await supabase.auth
+        .updateUser({
+            data: {
+                avatar: fileName
+            }
+        });
+
+    if (dataUpdateError)
+    {
+        return {
+            error: true,
+            message: 'Error associating the avatar with the user'
+        }
+    }
+
+    return { message: 'Updated the user avatar' }
+}

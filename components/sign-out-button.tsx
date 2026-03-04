@@ -7,7 +7,7 @@ import { LogOut } from 'lucide-react';
 export default function SignOutButton()
 {
     return <form action={signOut}>
-        <SubmitButton Variant="ghost" Size="sm">
+        <SubmitButton variant="ghost" size="sm">
             <LogOut className="w-6 h-6" />
         </SubmitButton>
     </form>
