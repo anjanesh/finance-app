@@ -2,7 +2,7 @@
 
 import {revalidatePath, revalidateTag} from 'next/cache';
 import { createClient } from './supabase/server';
-import { TransactionFormValues } from '@/lib/validation'; // Import your inferred type
+import {settingsSchema, TransactionFormValues} from '@/lib/validation'; // Import your inferred type
 import { transactionSchema } from './validation';
 import {TrendRange} from "@/types/trends";
 import { redirect } from 'next/navigation';
@@ -184,4 +184,46 @@ export async function uploadAvatar(prevState: FormState, formData: FormData)
     }
 
     return { message: 'Updated the user avatar' }
+}
+
+export async function updateSettings(prevState: FormState, formData: FormData)
+{
+    const validated = settingsSchema.safeParse({
+        fullName: formData.get('fullName'),
+        defaultView: formData.get('defaultView'),
+    });
+
+    if (!validated.success)
+    {
+        return {
+            error: true,
+            message: 'Error updating settings',
+            errors: validated.error.flatten().fieldErrors
+        }
+    }
+
+
+    const supabase = await createClient();
+    const {error} = await supabase.auth
+        .updateUser({
+            data: {
+                fullName: validated.data.fullName,
+                defaultView: validated.data.defaultView,
+            }
+        })
+
+    if (error)
+    {
+        return {
+            error: true,
+            message: 'Failed updating setting',
+            errors: {}
+        }
+    }
+
+    return {
+        error: false,
+        message: 'Updated user settings',
+        errors: {}
+    }
 }

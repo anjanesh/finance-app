@@ -22,7 +22,7 @@ const PageHeader = async ({className}: {className: string}) =>
                 <DarkModeToggle defaultMode={theme} />
                 {user && <Link href="/dashboard/settings" className={`flex items-center space-x-1 ${variants['ghost']} ${sizes['sm']}`}>
                     <Avatar />
-                    <span>{user?.email}</span>
+                    <span>{user?.user_metadata?.fullName ?? user?.email}</span>
                 </Link>}
                 {user && <SignOutButton />}
                 {!user && <Link href="/login" className={`${variants['ghost']} ${sizes['sm']}`}>

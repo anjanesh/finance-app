@@ -17,12 +17,15 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ r
     // Await the searchParams object
     const params = await searchParams;
 
-    // 2. Narrow the type and provide a fallback
-    // We cast it 'as TrendRange' but only after ensuring we have a safe default
-    const range = (params.range as TrendRange) || 'last30days';
-
     const supabase = await createClient();
     console.log(await supabase.auth.getUser());
+
+    const { data: { user } } = await supabase.auth.getUser();
+    const settings = user?.user_metadata;
+
+    // 2. Narrow the type and provide a fallback
+    // We cast it 'as TrendRange' but only after ensuring we have a safe default
+    const range = (params.range as TrendRange) ?? settings?.defaultView ?? 'last30days';
 
     // 1. Await the client creation
     const client = await createClient();
@@ -32,12 +35,14 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ r
 
     // console.log("data =", data);
 
+    console.log("settings?.defaultView =", settings?.defaultView);
+
     return (
         <div className="space-y-8">
             <section className="flex justify-between items-center">
                 <h1 className="text-4xl font-semibold">Summary</h1>
                 <aside>
-                    <Range />
+                    <Range defaultView={settings?.defaultView} />
                 </aside>
             </section>
 
